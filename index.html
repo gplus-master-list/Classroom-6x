@@ -5,13 +5,13 @@
     <title>Classroom 6x - Play Ice Cream Catcher Unblocked Online</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f4f7f6; }
-        .game-container { text-align: center; background: #fff; padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        .game-container { text-align: center; background: #fff; padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px; position: relative; }
         canvas { background: #1a1a1a; display: block; margin: 10px auto; border-radius: 8px; cursor: crosshair; }
         .article-section { background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: left; }
         h1, h2 { color: #2c3e50; }
         .score-board { font-size: 24px; font-weight: bold; color: #e74c3c; margin-bottom: 10px; }
         .backlink { display: inline-block; margin-top: 20px; padding: 10px 20px; background: #3498db; color: #fff; text-decoration: none; border-radius: 5px; font-weight: bold; }
-        .backlink:hover { background: #2980b9; }
+        .keyword-link { color: #3498db; text-decoration: underline; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -25,54 +25,106 @@
     </div>
 
     <div class="article-section">
-        <h2>Why Classroom 6x is the Best Choice for Students</h2>
-        <p>In today's digital age, finding quality entertainment during breaks can be a challenge. That's where <strong>classroom 6x</strong> comes in. This platform provides a safe and fun environment for students to enjoy their favorite browser games without any restrictions.</p>
-        
-        <h3>The Benefits of Browser Gaming</h3>
-        <p>Playing simple games like our Ice Cream Catcher on <strong>classroom 6x</strong> helps in improving hand-eye coordination and provides a much-needed mental break. Unlike heavy downloads, these HTML5 games start instantly in any browser.</p>
+        <h2>Why <a href="https://classrooms-6x.com/" class="keyword-link">Classroom 6x</a> is the Best Choice for Students</h2>
+        <p>In today's digital age, finding quality entertainment during breaks can be a challenge. That's where <strong><a href="https://classrooms-6x.com/" class="keyword-link">classroom 6x</a></strong> comes in. This platform provides a safe and fun environment for students to enjoy their favorite browser games without any restrictions.</p>
 
+        <h3>The Benefits of Browser Gaming</h3>
+        <p>Playing simple games like our Ice Cream Catcher on <strong><a href="https://classrooms-6x.com/" class="keyword-link">classroom 6x</a></strong> helps in improving hand-eye coordination and provides a much-needed mental break.</p>
+        
         <h2>How to Play This Game</h2>
         <ul>
             <li>Move your mouse left and right to control the blue paddle.</li>
             <li>Catch the pink ice cream balls to increase your score.</li>
-            <li>Try to get the highest score possible before the break ends!</li>
+            <li><strong>Don't let them fall!</strong> If you miss one, it's Game Over.</li>
         </ul>
-        <p>For more unblocked fun, don't forget to visit the official <strong>classroom 6x</strong> website and explore thousands of free games.</p>
     </div>
 
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
-        let score = 0, playerX = 175, items = [];
+        const scoreElement = document.getElementById("scoreVal");
+
+        let score = 0;
+        let playerX = 175;
+        let items = [];
+        let gameActive = true;
 
         document.addEventListener("mousemove", (e) => {
+            if (!gameActive) return;
             let rect = canvas.getBoundingClientRect();
             playerX = e.clientX - rect.left - 35;
             if (playerX < 0) playerX = 0;
             if (playerX > 330) playerX = 330;
         });
 
-        function spawn() { items.push({ x: Math.random() * 370 + 15, y: 0, s: 3 + Math.random() * 2 }); }
+        function spawnItem() {
+            if (!gameActive) return;
+            items.push({
+                x: Math.random() * 370 + 15,
+                y: 0,
+                speed: 3 + Math.random() * 2
+            });
+        }
 
         function draw() {
-            ctx.clearRect(0, 0, 400, 500);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Player
             ctx.fillStyle = "#3498db";
             ctx.fillRect(playerX, 470, 70, 15);
-            items.forEach((it, i) => {
-                it.y += it.s;
+
+            // Draw Items
+            for (let i = 0; i < items.length; i++) {
+                let it = items[i];
+                it.y += it.speed;
+
                 ctx.fillStyle = "#ff7675";
                 ctx.beginPath();
                 ctx.arc(it.x, it.y, 12, 0, Math.PI * 2);
                 ctx.fill();
-                if (it.y > 470 && it.x > playerX && it.x < playerX + 70) {
+
+                // Collision detection
+                if (it.y > 470 && it.y < 485 && it.x > playerX && it.x < playerX + 70) {
                     score++;
-                    document.getElementById("scoreVal").innerText = score;
+                    scoreElement.innerText = score;
                     items.splice(i, 1);
-                } else if (it.y > 500) { items.splice(i, 1); }
-            });
-            requestAnimationFrame(draw);
+                    i--;
+                } 
+                // GAME OVER Logic: Agar ball paddle se niche gir jaye
+                else if (it.y > 500) {
+                    gameActive = false;
+                    showGameOver();
+                }
+            }
+
+            if (gameActive) {
+                requestAnimationFrame(draw);
+            }
         }
-        setInterval(spawn, 800);
+
+        function showGameOver() {
+            ctx.fillStyle = "rgba(0,0,0,0.7)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "white";
+            ctx.font = "30px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("GAME OVER", 200, 230);
+            ctx.font = "20px Arial";
+            ctx.fillText("Final Score: " + score, 200, 270);
+            ctx.fillText("Click to Restart", 200, 310);
+        }
+
+        canvas.addEventListener("click", () => {
+            if (!gameActive) {
+                score = 0;
+                scoreElement.innerText = score;
+                items = [];
+                gameActive = true;
+                draw();
+            }
+        });
+
+        setInterval(spawnItem, 1000);
         draw();
     </script>
 </body>
